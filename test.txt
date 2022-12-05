@@ -1,0 +1,4 @@
+[44m [37m BTC WALLET: [30m 16p9y6EstGYcnofGNvUJMEGKiAWhAr1uR8 [0m
+Socket json response
+{'result': [[['mining.notify', '87dbbbf6']], 'ec24ff86', 8], 'id': 1, 'error': None}
+<module 'context' from 'C:\\Users\\Administrator\\Desktop\\Nischal Projects\\SoloMinerV2\\context.py'>
