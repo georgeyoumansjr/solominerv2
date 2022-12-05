@@ -74,6 +74,7 @@ class ExitedThread(threading.Thread) :
             if self.exit :
                 break
             ctx.listfThreadRunning[n] = True
+            print(ctx)
             try :
                 self.thread_handler2(arg)
             except Exception as e :
@@ -106,11 +107,15 @@ def bitcoin_miner(t , restarted = False) :
         time.sleep(5)
 
     target = (ctx.nbits[2 :] + '00' * (int(ctx.nbits[:2] , 16) - 3)).zfill(64)
+    print(ctx)
     extranonce2 = hex(random.randint(0 , 2 ** 32 - 1))[2 :].zfill(2 * ctx.extranonce2_size)  # create random
 
     coinbase = ctx.coinb1 + ctx.extranonce1 + extranonce2 + ctx.coinb2
+    print("Coin base is \n ")
+    print(coinbase)
     coinbase_hash_bin = hashlib.sha256(hashlib.sha256(binascii.unhexlify(coinbase)).digest()).digest()
-
+    print("coinbase hash is ")
+    print(coinbase_hash_bin)
     merkle_root = coinbase_hash_bin
     for h in ctx.merkle_branch :
         merkle_root = hashlib.sha256(hashlib.sha256(merkle_root + binascii.unhexlify(h)).digest()).digest()
@@ -203,6 +208,8 @@ def block_listener(t) :
     sock.sendall(b'{"id": 1, "method": "mining.subscribe", "params": []}\n')
     lines = sock.recv(1024).decode().split('\n')
     response = json.loads(lines[0])
+    print("Socket json response")
+    print(response)
     ctx.sub_details , ctx.extranonce1 , ctx.extranonce2_size = response['result']
     # send and handle authorize message
     sock.sendall(b'{"params": ["' + address.encode() + b'", "password"], "id": 2, "method": "mining.authorize"}\n')
@@ -280,6 +287,13 @@ class NewSubscribeThread(ExitedThread) :
     pass
 
 
+class TestClass(ExitedThread):
+    def __init__(self,arg=None):
+        super(TestClass,self).__init__(arg,n=1)
+    
+    
+
+
 def StartMining() :
     subscribe_t = NewSubscribeThread(None)
     subscribe_t.start()
@@ -296,5 +310,6 @@ def StartMining() :
 
 
 if __name__ == '__main__' :
-    signal(SIGINT , handler)
-    StartMining()
+    block_listener(TestClass(1))
+    # signal(SIGINT , handler)
+    # StartMining()
