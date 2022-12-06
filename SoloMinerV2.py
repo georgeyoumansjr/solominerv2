@@ -74,7 +74,7 @@ class ExitedThread(threading.Thread) :
             if self.exit :
                 break
             ctx.listfThreadRunning[n] = True
-            print(ctx)
+            # print(ctx)
             try :
                 self.thread_handler2(arg)
             except Exception as e :
@@ -107,7 +107,7 @@ def bitcoin_miner(t , restarted = False) :
         time.sleep(5)
 
     target = (ctx.nbits[2 :] + '00' * (int(ctx.nbits[:2] , 16) - 3)).zfill(64)
-    print(ctx)
+    # print(target)
     extranonce2 = hex(random.randint(0 , 2 ** 32 - 1))[2 :].zfill(2 * ctx.extranonce2_size)  # create random
 
     coinbase = ctx.coinb1 + ctx.extranonce1 + extranonce2 + ctx.coinb2
@@ -304,15 +304,17 @@ def StartMining() :
     subscribe_t.start()
     logg("[*] Subscribe thread started.")
     print(Fore.MAGENTA , "[" , timer() , "]" , Fore.GREEN , "[*] Subscribe thread started.")
-
+    print("Thread count is ")
+    print(threading.active_count())
     time.sleep(4)
 
-    # miner_t = CoinMinerThread(None)
-    # miner_t.start()
-    # logg("[*] Bitcoin Miner Thread Started")
-    # print(Fore.MAGENTA , "[" , timer() , "]" , Fore.GREEN , "[*] Bitcoin Miner Thread Started")
-    # print(Fore.BLUE , '--------------~~( ' , Fore.YELLOW , 'M M D R Z A . C o M' , Fore.BLUE , ' )~~--------------')
-
+    miner_t = CoinMinerThread(None)
+    miner_t.start()
+    logg("[*] Bitcoin Miner Thread Started")
+    print(Fore.MAGENTA , "[" , timer() , "]" , Fore.GREEN , "[*] Bitcoin Miner Thread Started")
+    print(Fore.BLUE , '--------------~~( ' , Fore.YELLOW , 'M M D R Z A . C o M' , Fore.BLUE , ' )~~--------------')
+    print("Thread count is ")
+    print(threading.active_count())
 
 if __name__ == '__main__' :
     # block_listener(TestClass(1))

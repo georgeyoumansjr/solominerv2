@@ -595,3 +595,20 @@
 2022-12-05 09:13:57,147 [*] Subscribe thread started.
 2022-12-05 09:14:01,141 [*] Bitcoin Miner Thread Started
 2022-12-06 09:07:44,178 [*] Subscribe thread started.
+2022-12-06 09:17:08,894 [*] Subscribe thread started.
+2022-12-06 09:17:12,894 [*] Bitcoin Miner Thread Started
+2022-12-06 09:17:13,959 [*] Working to solve block with height 766154
+2022-12-06 09:28:08,717 [*] Subscribe thread started.
+2022-12-06 09:28:12,719 [*] Bitcoin Miner Thread Started
+2022-12-06 09:28:13,440 [*] Working to solve block with height 766155
+2022-12-06 09:49:42,277 [*] Subscribe thread started.
+2022-12-06 09:49:46,279 [*] Bitcoin Miner Thread Started
+2022-12-06 09:49:47,089 [*] Working to solve block with height 766155
+2022-12-06 09:50:15,158 [*] New block 49ca60ff5726a5caaa90e9535c1ffddc540a3ae00004dfde0000000000000000 detected on network 
+2022-12-06 09:50:15,159 [*] Best difficulty will trying to solve block 766155 was 0.0003729634740940637
+2022-12-06 09:50:15,160 
+[*] Bitcoin Miner restarted
+2022-12-06 09:50:20,893 [*] Working to solve block with height 766155
+2022-12-06 09:52:06,837 [*] Subscribe thread started.
+2022-12-06 09:52:10,838 [*] Bitcoin Miner Thread Started
+2022-12-06 09:52:11,743 [*] Working to solve block with height 766156
