@@ -206,7 +206,10 @@ def block_listener(t) :
     sock.connect(('solo.ckpool.org' , 3333))
     # send a handle subscribe message
     sock.sendall(b'{"id": 1, "method": "mining.subscribe", "params": []}\n')
-    lines = sock.recv(1024).decode().split('\n')
+    lines = sock.recv(1024)
+    print(lines)
+    lines = lines.decode().split('\n')
+    print(lines)
     response = json.loads(lines[0])
     print("Socket json response")
     print(response)
@@ -215,9 +218,11 @@ def block_listener(t) :
     sock.sendall(b'{"params": ["' + address.encode() + b'", "password"], "id": 2, "method": "mining.authorize"}\n')
     response = b''
     while response.count(b'\n') < 4 and not (b'mining.notify' in response) : response += sock.recv(1024)
-    print(ctx)
+    # print(ctx)
     responses = [json.loads(res) for res in response.decode().split('\n') if
                  len(res.strip()) > 0 and 'mining.notify' in res]
+    print("responses")
+    print(responses)
     ctx.job_id , ctx.prevhash , ctx.coinb1 , ctx.coinb2 , ctx.merkle_branch , ctx.version , ctx.nbits , ctx.ntime , ctx.clean_jobs = \
         responses[0]['params']
     # do this one time, will be overwriten by mining loop when new block is detected
@@ -302,14 +307,14 @@ def StartMining() :
 
     time.sleep(4)
 
-    miner_t = CoinMinerThread(None)
-    miner_t.start()
-    logg("[*] Bitcoin Miner Thread Started")
-    print(Fore.MAGENTA , "[" , timer() , "]" , Fore.GREEN , "[*] Bitcoin Miner Thread Started")
-    print(Fore.BLUE , '--------------~~( ' , Fore.YELLOW , 'M M D R Z A . C o M' , Fore.BLUE , ' )~~--------------')
+    # miner_t = CoinMinerThread(None)
+    # miner_t.start()
+    # logg("[*] Bitcoin Miner Thread Started")
+    # print(Fore.MAGENTA , "[" , timer() , "]" , Fore.GREEN , "[*] Bitcoin Miner Thread Started")
+    # print(Fore.BLUE , '--------------~~( ' , Fore.YELLOW , 'M M D R Z A . C o M' , Fore.BLUE , ' )~~--------------')
 
 
 if __name__ == '__main__' :
-    block_listener(TestClass(1))
-    # signal(SIGINT , handler)
-    # StartMining()
+    # block_listener(TestClass(1))
+    signal(SIGINT , handler)
+    StartMining()
