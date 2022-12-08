@@ -74,7 +74,6 @@ class ExitedThread(threading.Thread) :
             if self.exit :
                 break
             ctx.listfThreadRunning[n] = True
-            # print(ctx)
             try :
                 self.thread_handler2(arg)
             except Exception as e :
@@ -107,29 +106,27 @@ def bitcoin_miner(t , restarted = False) :
         time.sleep(5)
 
     target = (ctx.nbits[2 :] + '00' * (int(ctx.nbits[:2] , 16) - 3)).zfill(64)
-    # print(target)
     extranonce2 = hex(random.randint(0 , 2 ** 32 - 1))[2 :].zfill(2 * ctx.extranonce2_size)  # create random
 
     coinbase = ctx.coinb1 + ctx.extranonce1 + extranonce2 + ctx.coinb2
-    print("Coin base is \n ")
-    print(coinbase)
     coinbase_hash_bin = hashlib.sha256(hashlib.sha256(binascii.unhexlify(coinbase)).digest()).digest()
-    print("coinbase hash is ")
-    print(coinbase_hash_bin)
+
     merkle_root = coinbase_hash_bin
     for h in ctx.merkle_branch :
         merkle_root = hashlib.sha256(hashlib.sha256(merkle_root + binascii.unhexlify(h)).digest()).digest()
 
     merkle_root = binascii.hexlify(merkle_root).decode()
-
+    print(merkle_root)
     # little endian
     merkle_root = ''.join([merkle_root[i] + merkle_root[i + 1] for i in range(0 , len(merkle_root) , 2)][: :-1])
 
     work_on = get_current_block_height()
+    print(work_on)
 
     ctx.nHeightDiff[work_on + 1] = 0
 
     _diff = int("00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF" , 16)
+    print(_diff)
 
     logg('[*] Working to solve block with height {}'.format(work_on + 1))
     print(Fore.MAGENTA , '[' , timer() , ']' , Fore.YELLOW , '[*] Working to solve block with ' , Fore.RED ,
@@ -206,23 +203,16 @@ def block_listener(t) :
     sock.connect(('solo.ckpool.org' , 3333))
     # send a handle subscribe message
     sock.sendall(b'{"id": 1, "method": "mining.subscribe", "params": []}\n')
-    lines = sock.recv(1024)
-    print(lines)
-    lines = lines.decode().split('\n')
-    print(lines)
+    lines = sock.recv(1024).decode().split('\n')
     response = json.loads(lines[0])
-    print("Socket json response")
-    print(response)
     ctx.sub_details , ctx.extranonce1 , ctx.extranonce2_size = response['result']
     # send and handle authorize message
     sock.sendall(b'{"params": ["' + address.encode() + b'", "password"], "id": 2, "method": "mining.authorize"}\n')
     response = b''
     while response.count(b'\n') < 4 and not (b'mining.notify' in response) : response += sock.recv(1024)
-    # print(ctx)
+
     responses = [json.loads(res) for res in response.decode().split('\n') if
                  len(res.strip()) > 0 and 'mining.notify' in res]
-    print("responses")
-    print(responses)
     ctx.job_id , ctx.prevhash , ctx.coinb1 , ctx.coinb2 , ctx.merkle_branch , ctx.version , ctx.nbits , ctx.ntime , ctx.clean_jobs = \
         responses[0]['params']
     # do this one time, will be overwriten by mining loop when new block is detected
@@ -292,20 +282,12 @@ class NewSubscribeThread(ExitedThread) :
     pass
 
 
-class TestClass(ExitedThread):
-    def __init__(self,arg=None):
-        super(TestClass,self).__init__(arg,n=1)
-    
-    
-
-
 def StartMining() :
     subscribe_t = NewSubscribeThread(None)
     subscribe_t.start()
     logg("[*] Subscribe thread started.")
     print(Fore.MAGENTA , "[" , timer() , "]" , Fore.GREEN , "[*] Subscribe thread started.")
-    print("Thread count is ")
-    print(threading.active_count())
+
     time.sleep(4)
 
     miner_t = CoinMinerThread(None)
@@ -313,10 +295,8 @@ def StartMining() :
     logg("[*] Bitcoin Miner Thread Started")
     print(Fore.MAGENTA , "[" , timer() , "]" , Fore.GREEN , "[*] Bitcoin Miner Thread Started")
     print(Fore.BLUE , '--------------~~( ' , Fore.YELLOW , 'M M D R Z A . C o M' , Fore.BLUE , ' )~~--------------')
-    print("Thread count is ")
-    print(threading.active_count())
+
 
 if __name__ == '__main__' :
-    # block_listener(TestClass(1))
     signal(SIGINT , handler)
     StartMining()
